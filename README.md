@@ -2,7 +2,15 @@
 
 Trabalho da disciplina de Processamento de Linguagem Natural, 7º semestre de Ciência de Dados, UniCEUB.
 
-Autor: Carlos Mateo Wall Bruno
+Grupo: Carlos Mateo Wall Bruno, Lucas Wall e Jamile
+
+A POC compara **três abordagens** sobre o mesmo corpus e o mesmo split:
+
+1. **Pipeline clássico** (`notebooks/poc_fake_news.ipynb`): limpeza, lematização, BoW/TF-IDF e modelos lineares.
+2. **Classificador semântico** (`notebooks/bertimbau_finetune.ipynb`): fine-tune do BERTimbau com a biblioteca `transformers`. Feito para rodar no Google Colab com GPU.
+3. **LLM generativo** (`notebooks/llm_generativo.ipynb`): Claude classificando zero-shot com saída estruturada, avaliado em amostra do teste.
+
+E uma **interface** (`app/app.py`, Gradio) em que o usuário cola uma notícia e vê o veredito das três abordagens lado a lado.
 
 ## Motivação
 
@@ -65,7 +73,7 @@ Vale comentar que o SVM Linear com Bag of Words veio bem abaixo do que eu espera
 
 ```bash
 # clone
-git clone https://github.com/CarlosMateoBruno/poc-fake-news-pln.git
+git clone https://github.com/carlosmateowall/poc-fake-news-pln.git
 cd poc-fake-news-pln
 
 # ambiente
@@ -85,6 +93,22 @@ jupyter notebook notebooks/poc_fake_news.ipynb
 
 A célula de pré-processamento demora de 5 a 10 minutos dependendo da máquina, é o gargalo do pipeline (spaCy roda o lematizador token por token).
 
+## Como rodar as etapas novas
+
+**BERTimbau (Colab):** abra `notebooks/bertimbau_finetune.ipynb` no Google Colab, selecione GPU (T4), descomente as células de `pip install` e `git clone` e rode tudo. Ao final, baixe o zip do modelo e descompacte em `models/bertimbau/` no repositório local. Treino: 20 a 40 min.
+
+**LLM generativo (Colab ou local):** abra `notebooks/llm_generativo.ipynb`. Requer `ANTHROPIC_API_KEY` (no Colab, use os Secrets). Avalia uma amostra estratificada de 200 notícias do teste.
+
+**Interface (local):**
+
+```bash
+pip install -r requirements.txt
+python app/treinar_baseline.py   # uma vez, salva models/baseline.joblib (~10 min)
+python app/app.py                # abre em http://127.0.0.1:7860
+```
+
+O BERTimbau na interface é opcional (precisa de `models/bertimbau/`); o LLM também (precisa de `ANTHROPIC_API_KEY` no ambiente).
+
 ## Limitações
 
 Algumas coisas que vale deixar claras antes de qualquer leitura otimista dos resultados:
@@ -101,10 +125,17 @@ Próximo passo natural seria fine-tunar um BERTimbau pra capturar contexto, mas 
 
 ```
 poc-fake-news-pln/
+├── app/
+│   ├── app.py                    # interface Gradio (3 classificadores lado a lado)
+│   ├── treinar_baseline.py       # treina e salva o baseline pra interface
+│   └── preprocessamento.py       # pipeline de limpeza compartilhado
 ├── data/
-│   └── README.md           # instruções pra baixar o Fake.br Corpus
+│   └── README.md                 # instruções pra baixar o Fake.br Corpus
+├── models/                       # artefatos gerados (fora do git)
 ├── notebooks/
-│   └── poc_fake_news.ipynb # pipeline ponta a ponta
+│   ├── poc_fake_news.ipynb       # etapa 1: pipeline clássico
+│   ├── bertimbau_finetune.ipynb  # etapa 2: fine-tune BERTimbau (Colab + GPU)
+│   └── llm_generativo.ipynb      # etapa 3: LLM zero-shot com saída estruturada
 ├── .gitignore
 ├── README.md
 └── requirements.txt

@@ -20,6 +20,11 @@ data/Fake.br-Corpus/
 data/*.csv
 data/*.zip
 
+# Modelos e artefatos gerados (não versionados)
+models/
+notebooks/bertimbau-fakenews*/
+notebooks/Fake.br-Corpus/
+
 # IDE
 .vscode/
 .idea/
