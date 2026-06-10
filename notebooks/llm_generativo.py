@@ -188,10 +188,11 @@ for _, e in erros.head(5).iterrows():
 
 # %%
 comparacao = pd.DataFrame([
+    # números reais das execuções de 2026-06-10 (mesmo split)
     {"abordagem": "Clássico: LogReg + TF-IDF", "avaliado_em": "teste completo (1.440)",
-     "accuracy": 0.96, "f1": 0.96, "custo": "segundos de CPU", "treino": "sim"},
+     "accuracy": 0.9535, "f1": 0.9539, "custo": "segundos de CPU", "treino": "sim"},
     {"abordagem": "Semântico: BERTimbau fine-tunado", "avaliado_em": "teste completo (1.440)",
-     "accuracy": None, "f1": None, "custo": "minutos de GPU", "treino": "sim"},
+     "accuracy": 0.9944, "f1": 0.9944, "custo": "1min47s de GPU", "treino": "sim"},
     {"abordagem": f"Generativo: {LLM_MODELO}", "avaliado_em": f"amostra ({len(res)})",
      "accuracy": accuracy_score(res["label"], res["pred"]),
      "f1": f1_score(res["label"], res["pred"]),

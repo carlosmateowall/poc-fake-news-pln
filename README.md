@@ -50,7 +50,17 @@ modelo (Naive Bayes, LogReg ou SVM Linear)
 avaliação (accuracy, F1, matriz de confusão, ROC AUC)
 ```
 
-## Resultados
+## Resultados das três abordagens (execução de 2026-06-10, mesmo split 80/20)
+
+| Abordagem | Avaliado em | Accuracy | F1 | Custo |
+|---|---|---|---|---|
+| Clássico: Regressão Logística + TF-IDF | teste completo (1.440) | 0,9535 | 0,9539 | segundos de CPU |
+| **Semântico: BERTimbau fine-tunado** | teste completo (1.440) | **0,9944** | **0,9944** | 1min47s em RTX 5070 Ti |
+| Generativo: LLM zero-shot | amostra (200) | pendente | pendente | API por chamada |
+
+O BERTimbau errou só 8 das 1.440 notícias do teste (ROC AUC 0,9997). Numa verificação manual com 6 notícias reais, o clássico acertou 5/6 e o BERTimbau 6/6. Métricas completas em `models/bertimbau_metricas.json` após rodar `scripts/treinar_bertimbau.py`.
+
+## Resultados do pipeline clássico
 
 Treinei 6 combinações (3 modelos x 2 vetorizações) com split 80/20 estratificado, random_state=42:
 

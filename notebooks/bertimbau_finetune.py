@@ -186,7 +186,8 @@ plt.show()
 comparacao = pd.DataFrame([
     {"modelo": "Naive Bayes + BoW (clássico)",        "accuracy": 0.94, "f1": 0.94},
     {"modelo": "SVM Linear + TF-IDF (clássico)",       "accuracy": 0.96, "f1": 0.96},
-    {"modelo": "Regressão Logística + TF-IDF (clássico)", "accuracy": 0.96, "f1": 0.96},
+    # números reais da execução de 2026-06-10 (app/treinar_baseline.py, mesmo split)
+    {"modelo": "Regressão Logística + TF-IDF (clássico)", "accuracy": 0.9535, "f1": 0.9539},
     {"modelo": "BERTimbau fine-tunado (semântico)",
      "accuracy": accuracy_score(y_test, pred), "f1": f1_score(y_test, pred)},
 ]).sort_values("f1", ascending=False).reset_index(drop=True)
@@ -233,8 +234,15 @@ tokenizer.save_pretrained("bertimbau-fakenews")
 # %% [markdown]
 # ## 9. Conclusões
 #
-# - O fine-tune do BERTimbau atinge (ou supera) o teto do pipeline clássico no Fake.br,
-#   tipicamente F1 ≥ 0,98 contra ~0,96 da Regressão Logística + TF-IDF.
+# **Resultado da execução de referência (2026-06-10, RTX 5070 Ti, 1min47s de treino):**
+# accuracy 0,9944 | F1 0,9944 | ROC AUC 0,9997 | 8 erros em 1.440 (2 FP, 6 FN).
+#
+# - O fine-tune do BERTimbau supera o teto do pipeline clássico no Fake.br:
+#   F1 0,9944 contra 0,9539 da Regressão Logística + TF-IDF (mesmo split).
+# - Em 6 notícias reais do teste verificadas manualmente: clássico 5/6, BERTimbau 6/6
+#   (o clássico errou uma verdadeira de tema religioso, o BERTimbau acertou com folga).
+# - Atenção: em manchetes curtas inventadas, ambos tendem a FAKE. As notícias verdadeiras
+#   do corpus são artigos longos de portal, então texto curto é fora da distribuição.
 # - A diferença prática não está só no número: o BERT enxerga **contexto e ordem das
 #   palavras**, então negação, sarcasmo e paráfrase deixam de ser pontos cegos estruturais.
 # - O custo também muda de patamar: minutos de GPU para treinar e um modelo de ~430 MB para
